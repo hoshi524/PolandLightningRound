@@ -341,8 +341,7 @@ public class KnightsAttacksVis {
             catch (Exception e) { e.printStackTrace(); }
             proc = null;
         }
-        int origin = runTest(seed);
-        debug("seed", seed, "S", S, "origin", origin, "score", score);
+        debug("seed", seed, "S", S, "score", score);
         return score;
     }
 
