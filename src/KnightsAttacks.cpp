@@ -48,7 +48,6 @@ struct Cell {
 };
 
 Cell cell[MAX_S][MAX_S];
-Cell* buf[MAX_S * MAX_S];
 
 class KnightsAttacks {
  public:
@@ -61,6 +60,7 @@ class KnightsAttacks {
         M[i][j] = board[i][j] - '0';
       }
     }
+    static Cell* buf[MAX_S * MAX_S];
     for (int i = 0; i < S; ++i) {
       for (int j = 0; j < S; ++j) {
         Cell* c = &cell[i][j];
