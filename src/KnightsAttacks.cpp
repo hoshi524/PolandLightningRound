@@ -2,8 +2,9 @@
 using namespace std;
 
 constexpr double TIME_LIMIT = 2000;
-constexpr int MAX_S = 502;
-int S, SS, M[MAX_S][MAX_S];
+constexpr int MAX_S = 1 << 9;
+int S, SS;
+char M[MAX_S][MAX_S];
 
 double get_time() {
   unsigned long long a, d;
@@ -17,6 +18,8 @@ unsigned get_random() {
 }
 
 double get_random_double() { return (double)get_random() / UINT_MAX; }
+
+bool in(int x, int y) { return 0 <= x && x < S && 0 <= y && y < S; }
 
 struct Cell {
   int x, y, v;
@@ -48,29 +51,34 @@ struct Cell {
 
   void value() {
     v = 0;
-    auto check = [&](int x, int y) {
-      if (0 <= x && x < S && 0 <= y && y < S) {
-        if (o)
-          v += M[x][y] < 0 ? 1 : -1;
-        else
-          v += M[x][y] > 0 ? 1 : -1;
-      }
-    };
-    check(x + 1, y + 2);
-    check(x + 1, y - 2);
-    check(x - 1, y + 2);
-    check(x - 1, y - 2);
-    check(x + 2, y + 1);
-    check(x + 2, y - 1);
-    check(x - 2, y + 1);
-    check(x - 2, y - 1);
-  }
-
-  void value(int x, int y, int p) {
     if (o) {
-      v += (p < 0 ? -1 : 1) + (M[x][y] < 0 ? 1 : -1);
+      auto check = [&](int x, int y) {
+        if (in(x, y)) {
+          v += M[x][y] < 0 ? 1 : -1;
+        }
+      };
+      check(x + 1, y + 2);
+      check(x + 1, y - 2);
+      check(x - 1, y + 2);
+      check(x - 1, y - 2);
+      check(x + 2, y + 1);
+      check(x + 2, y - 1);
+      check(x - 2, y + 1);
+      check(x - 2, y - 1);
     } else {
-      v += (p > 0 ? -1 : 1) + (M[x][y] > 0 ? 1 : -1);
+      auto check = [&](int x, int y) {
+        if (in(x, y)) {
+          v += M[x][y] > 0 ? 1 : -1;
+        }
+      };
+      check(x + 1, y + 2);
+      check(x + 1, y - 2);
+      check(x - 1, y + 2);
+      check(x - 1, y - 2);
+      check(x + 2, y + 1);
+      check(x + 2, y - 1);
+      check(x - 2, y + 1);
+      check(x - 2, y - 1);
     }
   }
 };
@@ -90,7 +98,7 @@ int score() {
 class KnightsAttacks {
  public:
   vector<string> placeKnights(vector<string> board) {
-    double end = get_time() + TIME_LIMIT;
+    const double end = get_time() + TIME_LIMIT;
     S = board.size();
     SS = S * S;
     for (int i = 0; i < S; ++i) {
@@ -110,13 +118,17 @@ class KnightsAttacks {
     auto change = [&](Cell& c) {
       c.change();
       auto update = [&](int x, int y) {
-        if (0 <= x && x < S && 0 <= y && y < S &&
-            ((c.o && (M[x][y] == -1 || M[x][y] == 0)) ||
-             (!c.o && (M[x][y] == 0 || M[x][y] == 1)))) {
+        if (in(x, y) && ((c.o && (M[x][y] == -1 || M[x][y] == 0)) ||
+                         (!c.o && (M[x][y] == 0 || M[x][y] == 1)))) {
           int p = M[x][y] + (c.o ? 1 : -1);
           auto update = [&](int a, int b) {
-            if (0 <= a && a < S && 0 <= b && b < S && (c.x != a || c.y != b))
-              cell[a][b].value(x, y, p);
+            if (in(a, b) && (c.x != a || c.y != b)) {
+              if (cell[a][b].o) {
+                cell[a][b].v += (p < 0 ? -1 : 1) + (M[x][y] < 0 ? 1 : -1);
+              } else {
+                cell[a][b].v += (p > 0 ? -1 : 1) + (M[x][y] > 0 ? 1 : -1);
+              }
+            }
           };
           update(x + 1, y + 2);
           update(x + 1, y - 2);
@@ -138,7 +150,7 @@ class KnightsAttacks {
       update(c.x - 2, c.y - 1);
     };
     while (true) {
-      const double time = -8.0 * (end - get_time()) / TIME_LIMIT;
+      const double time = -4.0 * (end - get_time()) / TIME_LIMIT;
       if (time > 0) break;
       for (int i = 0; i < S; ++i) {
         for (int j = 0; j < S; ++j) {
