@@ -319,30 +319,53 @@ class KnightsAttacks {
         cell[p].value(p);
       }
     }
+    auto check_ = [](int n, int a, int b) {
+      if (cell[n].o) {
+        cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
+      } else {
+        cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
+      }
+    };
+    auto check = [](int n, int a, int b) {
+      if (in(n)) {
+        if (cell[n].o) {
+          cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
+        } else {
+          cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
+        }
+      }
+    };
+    for (int i = 0; i < S; ++i) {
+      for (int j = 0; j < S; ++j) {
+        int p = to(i, j);
+        if (M[p] <= 0) continue;
+        int size = 0;
+        static int c[8];
+        auto add = [&](int p) {
+          if (in(p) && cell[p].v > 0) c[size++] = p;
+        };
+        add(p + MAX_S + 2);
+        add(p + MAX_S - 2);
+        add(p - MAX_S + 2);
+        add(p - MAX_S - 2);
+        add(p + 2 * MAX_S + 1);
+        add(p + 2 * MAX_S - 1);
+        add(p - 2 * MAX_S + 1);
+        add(p - 2 * MAX_S - 1);
+        sort(c, c + size, [](int a, int b) { return cell[a].v > cell[b].v; });
+        for (int i = 0, e = min((int)M[p], size); i < e; ++i) {
+          change(c[i], check);
+        }
+      }
+    }
     while (true) {
-      const double time = -4.0 * (end - get_time()) / TIME_LIMIT;
+      const double time = -2.0 * (end - get_time()) / TIME_LIMIT;
       if (time > 0) break;
       for (int i = 0; i < S; ++i) {
         for (int j = 0; j < S; ++j) {
           int p = to(i, j);
           if (cell[p].v >
               time * get_random_double() - 0.5 + get_random_double()) {
-            auto check_ = [](int n, int a, int b) {
-              if (cell[n].o) {
-                cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
-              } else {
-                cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
-              }
-            };
-            auto check = [](int n, int a, int b) {
-              if (in(n)) {
-                if (cell[n].o) {
-                  cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
-                } else {
-                  cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
-                }
-              }
-            };
             if (4 <= i && i < S - 4 && 4 <= j && j < S - 4) {
               change_(p, check_);
             } else if (2 <= i && i < S - 2 && 2 <= j && j < S - 2) {
