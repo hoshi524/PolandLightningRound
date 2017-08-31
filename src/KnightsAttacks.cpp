@@ -120,307 +120,191 @@ struct Cell {
 
 Cell cell[MAX_SS];
 
-void change(int p) {
+template <typename Check>
+void change(int p, Check check) {
   cell[p].change(p);
   int t = cell[p].o ? -1 : 1, x, v;
-  auto check = [&](int n) {
-    if (in(n)) {
-      if (cell[n].o) {
-        cell[n].v += (v < 0 ? -1 : 1) + (M[x] < 0 ? 1 : -1);
-      } else {
-        cell[n].v += (v > 0 ? -1 : 1) + (M[x] > 0 ? 1 : -1);
-      }
-    }
-  };
   x = p + MAX_S + 2;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p + MAX_S - 2;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - MAX_S + 2;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - MAX_S - 2;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p + 2 * MAX_S + 1;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
   }
   x = p + 2 * MAX_S - 1;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - 2 * MAX_S + 1;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - 2 * MAX_S - 1;
   if (in(x) && (M[x] == t || M[x] == 0)) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
 }
 
-void change_(int p) {
+template <typename Check>
+void change_(int p, Check check) {
   cell[p].change_(p);
   int t = cell[p].o ? -1 : 1, x, v;
-  auto check = [&](int n) {
-    if (in(n)) {
-      if (cell[n].o) {
-        cell[n].v += (v < 0 ? -1 : 1) + (M[x] < 0 ? 1 : -1);
-      } else {
-        cell[n].v += (v > 0 ? -1 : 1) + (M[x] > 0 ? 1 : -1);
-      }
-    }
-  };
   x = p + MAX_S + 2;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p + MAX_S - 2;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - MAX_S + 2;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - MAX_S - 2;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p + 2 * MAX_S + 1;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
   }
   x = p + 2 * MAX_S - 1;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - 2 * MAX_S + 1;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - 2 * MAX_S - 1;
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
-  }
-}
-
-void change__(int p) {
-  cell[p].change_(p);
-  int t = cell[p].o ? -1 : 1, x, v;
-  auto check = [&](int n) {
-    if (cell[n].o) {
-      cell[n].v += (v < 0 ? -1 : 1) + (M[x] < 0 ? 1 : -1);
-    } else {
-      cell[n].v += (v > 0 ? -1 : 1) + (M[x] > 0 ? 1 : -1);
-    }
-  };
-  x = p + MAX_S + 2;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
-  }
-  x = p + MAX_S - 2;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
-  }
-  x = p - MAX_S + 2;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
-  }
-  x = p - MAX_S - 2;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
-  }
-  x = p + 2 * MAX_S + 1;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-  }
-  x = p + 2 * MAX_S - 1;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S - 1);
-  }
-  x = p - 2 * MAX_S + 1;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S + 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
-  }
-  x = p - 2 * MAX_S - 1;
-  if (M[x] == t || M[x] == 0) {
-    v = M[x] - t;
-    check(x + MAX_S + 2);
-    check(x + MAX_S - 2);
-    check(x - MAX_S + 2);
-    check(x - MAX_S - 2);
-    check(x + 2 * MAX_S - 1);
-    check(x - 2 * MAX_S + 1);
-    check(x - 2 * MAX_S - 1);
+    check(x + MAX_S + 2, v, M[x]);
+    check(x + MAX_S - 2, v, M[x]);
+    check(x - MAX_S + 2, v, M[x]);
+    check(x - MAX_S - 2, v, M[x]);
+    check(x + 2 * MAX_S - 1, v, M[x]);
+    check(x - 2 * MAX_S + 1, v, M[x]);
+    check(x - 2 * MAX_S - 1, v, M[x]);
   }
 }
 
@@ -449,12 +333,28 @@ class KnightsAttacks {
           int p = to(i, j);
           if (cell[p].v >
               time * get_random_double() - 0.5 + get_random_double()) {
+            auto check_ = [](int n, int a, int b) {
+              if (cell[n].o) {
+                cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
+              } else {
+                cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
+              }
+            };
+            auto check = [](int n, int a, int b) {
+              if (in(n)) {
+                if (cell[n].o) {
+                  cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
+                } else {
+                  cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
+                }
+              }
+            };
             if (4 <= i && i < S - 4 && 4 <= j && j < S - 4) {
-              change__(p);
+              change_(p, check_);
             } else if (2 <= i && i < S - 2 && 2 <= j && j < S - 2) {
-              change_(p);
+              change_(p, check);
             } else {
-              change(p);
+              change(p, check);
             }
           }
         }
