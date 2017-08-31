@@ -3,8 +3,9 @@ using namespace std;
 
 constexpr double TIME_LIMIT = 2000;
 constexpr int MAX_S = 1 << 9;
-int S, SS;
-char M[MAX_S][MAX_S];
+constexpr int MAX_SS = MAX_S * MAX_S;
+int S;
+char M[MAX_SS];
 
 double get_time() {
   unsigned long long a, d;
@@ -19,229 +20,204 @@ unsigned get_random() {
 
 double get_random_double() { return (double)get_random() / UINT_MAX; }
 
-bool in(int x, int y) { return 0 <= x && x < S && 0 <= y && y < S; }
+int to(int x, int y) { return (x << 9) + y; }
+
+bool in(int p) {
+  int x = p >> 9;
+  int y = p & (MAX_S - 1);
+  return 0 <= x && x < S && 0 <= y && y < S;
+}
 
 struct Cell {
-  int x, y, v;
+  char v;
   bool o;
 
-  void change() {
+  inline void change(int p) {
     v = 0;
     if (o) {
-      auto check = [&](int x, int y) {
-        if (in(x, y)) {
-          v += ++M[x][y] > 0 ? 1 : -1;
-        }
+      auto check = [&](int p) {
+        if (in(p)) v += ++M[p] > 0 ? 1 : -1;
       };
-      check(x + 1, y + 2);
-      check(x + 1, y - 2);
-      check(x - 1, y + 2);
-      check(x - 1, y - 2);
-      check(x + 2, y + 1);
-      check(x + 2, y - 1);
-      check(x - 2, y + 1);
-      check(x - 2, y - 1);
+      check(p + MAX_S + 2);
+      check(p + MAX_S - 2);
+      check(p - MAX_S + 2);
+      check(p - MAX_S - 2);
+      check(p + 2 * MAX_S + 1);
+      check(p + 2 * MAX_S - 1);
+      check(p - 2 * MAX_S + 1);
+      check(p - 2 * MAX_S - 1);
     } else {
-      auto check = [&](int x, int y) {
-        if (in(x, y)) {
-          v += --M[x][y] < 0 ? 1 : -1;
-        }
+      auto check = [&](int p) {
+        if (in(p)) v += --M[p] < 0 ? 1 : -1;
       };
-      check(x + 1, y + 2);
-      check(x + 1, y - 2);
-      check(x - 1, y + 2);
-      check(x - 1, y - 2);
-      check(x + 2, y + 1);
-      check(x + 2, y - 1);
-      check(x - 2, y + 1);
-      check(x - 2, y - 1);
+      check(p + MAX_S + 2);
+      check(p + MAX_S - 2);
+      check(p - MAX_S + 2);
+      check(p - MAX_S - 2);
+      check(p + 2 * MAX_S + 1);
+      check(p + 2 * MAX_S - 1);
+      check(p - 2 * MAX_S + 1);
+      check(p - 2 * MAX_S - 1);
     }
     o = !o;
   }
 
-  void value() {
+  inline void value(int p) {
     v = 0;
     if (o) {
-      auto check = [&](int x, int y) {
-        if (in(x, y)) {
-          v += M[x][y] < 0 ? 1 : -1;
-        }
+      auto check = [&](int p) {
+        if (in(p)) v += M[p] < 0 ? 1 : -1;
       };
-      check(x + 1, y + 2);
-      check(x + 1, y - 2);
-      check(x - 1, y + 2);
-      check(x - 1, y - 2);
-      check(x + 2, y + 1);
-      check(x + 2, y - 1);
-      check(x - 2, y + 1);
-      check(x - 2, y - 1);
+      check(p + MAX_S + 2);
+      check(p + MAX_S - 2);
+      check(p - MAX_S + 2);
+      check(p - MAX_S - 2);
+      check(p + 2 * MAX_S + 1);
+      check(p + 2 * MAX_S - 1);
+      check(p - 2 * MAX_S + 1);
+      check(p - 2 * MAX_S - 1);
     } else {
-      auto check = [&](int x, int y) {
-        if (in(x, y)) {
-          v += M[x][y] > 0 ? 1 : -1;
-        }
+      auto check = [&](int p) {
+        if (in(p)) v += M[p] > 0 ? 1 : -1;
       };
-      check(x + 1, y + 2);
-      check(x + 1, y - 2);
-      check(x - 1, y + 2);
-      check(x - 1, y - 2);
-      check(x + 2, y + 1);
-      check(x + 2, y - 1);
-      check(x - 2, y + 1);
-      check(x - 2, y - 1);
+      check(p + MAX_S + 2);
+      check(p + MAX_S - 2);
+      check(p - MAX_S + 2);
+      check(p - MAX_S - 2);
+      check(p + 2 * MAX_S + 1);
+      check(p + 2 * MAX_S - 1);
+      check(p - 2 * MAX_S + 1);
+      check(p - 2 * MAX_S - 1);
     }
   }
 };
 
-Cell cell[MAX_S][MAX_S];
-
-int score() {
-  int x = 0;
-  for (int i = 0; i < S; ++i) {
-    for (int j = 0; j < S; ++j) {
-      x += abs(M[i][j]);
-    }
-  }
-  return x;
-}
+Cell cell[MAX_SS];
 
 class KnightsAttacks {
  public:
   vector<string> placeKnights(vector<string> board) {
     const double end = get_time() + TIME_LIMIT;
     S = board.size();
-    SS = S * S;
     for (int i = 0; i < S; ++i) {
       for (int j = 0; j < S; ++j) {
-        M[i][j] = board[i][j] - '0';
+        M[to(i, j)] = board[i][j] - '0';
       }
     }
     for (int i = 0; i < S; ++i) {
       for (int j = 0; j < S; ++j) {
-        Cell* c = &cell[i][j];
-        c->x = i;
-        c->y = j;
-        c->o = false;
-        c->value();
+        int p = to(i, j);
+        cell[p].o = false;
+        cell[p].value(p);
       }
     }
-    auto change = [&](Cell& c) {
-      c.change();
-      int t = c.o ? -1 : 1, x, y, p;
-      auto update = [&](int a, int b) {
-        if (in(a, b)) {
-          if (cell[a][b].o) {
-            cell[a][b].v += (p < 0 ? -1 : 1) + (M[x][y] < 0 ? 1 : -1);
-          } else {
-            cell[a][b].v += (p > 0 ? -1 : 1) + (M[x][y] > 0 ? 1 : -1);
-          }
-        }
-      };
-      x = c.x + 1;
-      y = c.y + 2;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x + 1, y - 2);
-        update(x - 1, y + 2);
-        update(x + 2, y + 1);
-        update(x + 2, y - 1);
-        update(x - 2, y + 1);
-        update(x - 2, y - 1);
-      }
-      x = c.x + 1;
-      y = c.y - 2;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x + 1, y - 2);
-        update(x - 1, y - 2);
-        update(x + 2, y + 1);
-        update(x + 2, y - 1);
-        update(x - 2, y + 1);
-        update(x - 2, y - 1);
-      }
-      x = c.x - 1;
-      y = c.y + 2;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x - 1, y + 2);
-        update(x - 1, y - 2);
-        update(x + 2, y + 1);
-        update(x + 2, y - 1);
-        update(x - 2, y + 1);
-        update(x - 2, y - 1);
-      }
-      x = c.x - 1;
-      y = c.y - 2;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y - 2);
-        update(x - 1, y + 2);
-        update(x - 1, y - 2);
-        update(x + 2, y + 1);
-        update(x + 2, y - 1);
-        update(x - 2, y + 1);
-        update(x - 2, y - 1);
-      }
-      x = c.x + 2;
-      y = c.y + 1;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x + 1, y - 2);
-        update(x - 1, y + 2);
-        update(x - 1, y - 2);
-        update(x + 2, y + 1);
-        update(x + 2, y - 1);
-        update(x - 2, y + 1);
-      }
-      x = c.x + 2;
-      y = c.y - 1;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x + 1, y - 2);
-        update(x - 1, y + 2);
-        update(x - 1, y - 2);
-        update(x + 2, y + 1);
-        update(x + 2, y - 1);
-        update(x - 2, y - 1);
-      }
-      x = c.x - 2;
-      y = c.y + 1;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x + 1, y - 2);
-        update(x - 1, y + 2);
-        update(x - 1, y - 2);
-        update(x + 2, y + 1);
-        update(x - 2, y + 1);
-        update(x - 2, y - 1);
-      }
-      x = c.x - 2;
-      y = c.y - 1;
-      if (in(x, y) && (M[x][y] == t || M[x][y] == 0)) {
-        p = M[x][y] - t;
-        update(x + 1, y + 2);
-        update(x + 1, y - 2);
-        update(x - 1, y + 2);
-        update(x - 1, y - 2);
-        update(x + 2, y - 1);
-        update(x - 2, y + 1);
-        update(x - 2, y - 1);
-      }
-    };
     while (true) {
       const double time = -4.0 * (end - get_time()) / TIME_LIMIT;
       if (time > 0) break;
       for (int i = 0; i < S; ++i) {
         for (int j = 0; j < S; ++j) {
-          if (cell[i][j].v >
+          int p = to(i, j);
+          if (cell[p].v >
               time * get_random_double() - 0.5 + get_random_double()) {
-            change(cell[i][j]);
+            cell[p].change(p);
+            int t = cell[p].o ? -1 : 1, x, v;
+            auto check = [&](int n) {
+              if (in(n)) {
+                if (cell[n].o) {
+                  cell[n].v += (v < 0 ? -1 : 1) + (M[x] < 0 ? 1 : -1);
+                } else {
+                  cell[n].v += (v > 0 ? -1 : 1) + (M[x] > 0 ? 1 : -1);
+                }
+              }
+            };
+            x = p + MAX_S + 2;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x + MAX_S - 2);
+              check(x - MAX_S + 2);
+              check(x + 2 * MAX_S + 1);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S + 1);
+              check(x - 2 * MAX_S - 1);
+            }
+            x = p + MAX_S - 2;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x + MAX_S - 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S + 1);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S + 1);
+              check(x - 2 * MAX_S - 1);
+            }
+            x = p - MAX_S + 2;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x - MAX_S + 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S + 1);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S + 1);
+              check(x - 2 * MAX_S - 1);
+            }
+            x = p - MAX_S - 2;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S - 2);
+              check(x - MAX_S + 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S + 1);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S + 1);
+              check(x - 2 * MAX_S - 1);
+            }
+            x = p + 2 * MAX_S + 1;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x + MAX_S - 2);
+              check(x - MAX_S + 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S + 1);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S + 1);
+            }
+            x = p + 2 * MAX_S - 1;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x + MAX_S - 2);
+              check(x - MAX_S + 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S + 1);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S - 1);
+            }
+            x = p - 2 * MAX_S + 1;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x + MAX_S - 2);
+              check(x - MAX_S + 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S + 1);
+              check(x - 2 * MAX_S + 1);
+              check(x - 2 * MAX_S - 1);
+            }
+            x = p - 2 * MAX_S - 1;
+            if (in(x) && (M[x] == t || M[x] == 0)) {
+              v = M[x] - t;
+              check(x + MAX_S + 2);
+              check(x + MAX_S - 2);
+              check(x - MAX_S + 2);
+              check(x - MAX_S - 2);
+              check(x + 2 * MAX_S - 1);
+              check(x - 2 * MAX_S + 1);
+              check(x - 2 * MAX_S - 1);
+            }
           }
         }
       }
@@ -249,7 +225,7 @@ class KnightsAttacks {
     vector<string> ret(S, string(S, '.'));
     for (int i = 0; i < S; ++i) {
       for (int j = 0; j < S; ++j) {
-        if (cell[i][j].o) ret[i][j] = 'K';
+        if (cell[to(i, j)].o) ret[i][j] = 'K';
       }
     }
     return ret;
