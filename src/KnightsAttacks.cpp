@@ -65,6 +65,14 @@ struct Cell {
     check(x - 2, y + 1);
     check(x - 2, y - 1);
   }
+
+  void value(int x, int y, int p) {
+    if (o) {
+      v += (p < 0 ? -1 : 1) + (M[x][y] < 0 ? 1 : -1);
+    } else {
+      v += (p > 0 ? -1 : 1) + (M[x][y] > 0 ? 1 : -1);
+    }
+  }
 };
 
 Cell cell[MAX_S][MAX_S];
@@ -99,31 +107,44 @@ class KnightsAttacks {
         c->value();
       }
     }
-    static int dx[] = {1, 1, -1, -1, 2, 2, -2, -2};
-    static int dy[] = {2, -2, 2, -2, 1, -1, 1, -1};
     auto change = [&](Cell& c) {
       c.change();
-      for (int j = 0; j < 8; ++j) {
-        int x = c.x + dx[j];
-        int y = c.y + dy[j];
-        if ((c.o && (M[x][y] == -1 || M[x][y] == 0)) ||
-            (!c.o && (M[x][y] == 0 || M[x][y] == 1))) {
-          for (int k = 0; k < 8; ++k) {
-            x = c.x + dx[j] + dx[k];
-            y = c.y + dy[j] + dy[k];
-            if (0 <= x && x < S && 0 <= y && y < S) cell[x][y].value();
-          }
+      auto update = [&](int x, int y) {
+        if (0 <= x && x < S && 0 <= y && y < S &&
+            ((c.o && (M[x][y] == -1 || M[x][y] == 0)) ||
+             (!c.o && (M[x][y] == 0 || M[x][y] == 1)))) {
+          int p = M[x][y] + (c.o ? 1 : -1);
+          auto update = [&](int a, int b) {
+            if (0 <= a && a < S && 0 <= b && b < S && (c.x != a || c.y != b))
+              cell[a][b].value(x, y, p);
+          };
+          update(x + 1, y + 2);
+          update(x + 1, y - 2);
+          update(x - 1, y + 2);
+          update(x - 1, y - 2);
+          update(x + 2, y + 1);
+          update(x + 2, y - 1);
+          update(x - 2, y + 1);
+          update(x - 2, y - 1);
         }
-      }
+      };
+      update(c.x + 1, c.y + 2);
+      update(c.x + 1, c.y - 2);
+      update(c.x - 1, c.y + 2);
+      update(c.x - 1, c.y - 2);
+      update(c.x + 2, c.y + 1);
+      update(c.x + 2, c.y - 1);
+      update(c.x - 2, c.y + 1);
+      update(c.x - 2, c.y - 1);
     };
     while (true) {
       const double time = -8.0 * (end - get_time()) / TIME_LIMIT;
       if (time > 0) break;
-      for (int i = 0; i < 0xff; ++i) {
-        int x = get_random() % S;
-        int y = get_random() % S;
-        if (cell[x][y].v >= time * get_random_double()) {
-          change(cell[x][y]);
+      for (int i = 0; i < S; ++i) {
+        for (int j = 0; j < S; ++j) {
+          if (cell[i][j].v >= time * get_random_double()) {
+            change(cell[i][j]);
+          }
         }
       }
     }
