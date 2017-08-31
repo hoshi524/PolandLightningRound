@@ -239,7 +239,8 @@ class KnightsAttacks {
       if (time > 0) break;
       for (int i = 0; i < S; ++i) {
         for (int j = 0; j < S; ++j) {
-          if (cell[i][j].v >= time * get_random_double()) {
+          if (cell[i][j].v >
+              time * get_random_double() - 0.5 + get_random_double()) {
             change(cell[i][j]);
           }
         }
