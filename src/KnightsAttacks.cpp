@@ -10,7 +10,7 @@ char M[MAX_SS];
 double get_time() {
   unsigned long long a, d;
   __asm__ volatile("rdtsc" : "=a"(a), "=d"(d));
-  return (d << 32 | a) / 2600000.0;
+  return (d << 32 | a) / 2800000.0;
 }
 
 unsigned get_random() {
