@@ -64,11 +64,11 @@ struct Cell {
 
 Cell cell[MAX_SS];
 
-template <typename Check, typename Change>
+template <int t, typename Check, typename Change>
 void change(int p, Check check, Change change) {
   cell[p].o = !cell[p].o;
   cell[p].v = 0;
-  int t = cell[p].o ? -1 : 1, x, v;
+  int x, v;
   x = p + MAX_S + 2;
   if (in(x)) {
     change(p, x);
@@ -185,17 +185,18 @@ void change(int p, Check check, Change change) {
 template <typename Check>
 void change(int p, Check check) {
   if (cell[p].o) {
-    change(p, check, [](int p, int n) { cell[p].v += ++M[n] > 0 ? 1 : -1; });
+    change<1>(p, check, [](int p, int n) { cell[p].v += ++M[n] > 0 ? 1 : -1; });
   } else {
-    change(p, check, [](int p, int n) { cell[p].v += --M[n] < 0 ? 1 : -1; });
+    change<-1>(p, check,
+               [](int p, int n) { cell[p].v += --M[n] < 0 ? 1 : -1; });
   }
 }
 
-template <typename Check, typename Change>
+template <int t, typename Check, typename Change>
 void change_(int p, Check check, Change change) {
   cell[p].o = !cell[p].o;
   cell[p].v = 0;
-  int t = cell[p].o ? -1 : 1, x, v;
+  int x, v;
   x = p + MAX_S + 2;
   change(p, x);
   if (M[x] == t || M[x] == 0) {
@@ -296,9 +297,11 @@ void change_(int p, Check check, Change change) {
 template <typename Check>
 void change_(int p, Check check) {
   if (cell[p].o) {
-    change_(p, check, [](int p, int n) { cell[p].v += ++M[n] > 0 ? 1 : -1; });
+    change_<1>(p, check,
+               [](int p, int n) { cell[p].v += ++M[n] > 0 ? 1 : -1; });
   } else {
-    change_(p, check, [](int p, int n) { cell[p].v += --M[n] < 0 ? 1 : -1; });
+    change_<-1>(p, check,
+                [](int p, int n) { cell[p].v += --M[n] < 0 ? 1 : -1; });
   }
 }
 
