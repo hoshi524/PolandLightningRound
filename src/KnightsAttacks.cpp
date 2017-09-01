@@ -67,11 +67,11 @@ Cell cell[MAX_SS];
 template <int t, typename Check, typename Change>
 void change(int p, Check check, Change change) {
   cell[p].o = !cell[p].o;
-  cell[p].v = 0;
+  cell[p].v = -cell[p].v;
   int x, v;
   x = p + MAX_S + 2;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -85,7 +85,7 @@ void change(int p, Check check, Change change) {
   }
   x = p + MAX_S - 2;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -99,7 +99,7 @@ void change(int p, Check check, Change change) {
   }
   x = p - MAX_S + 2;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -113,7 +113,7 @@ void change(int p, Check check, Change change) {
   }
   x = p - MAX_S - 2;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S - 2, v, M[x]);
@@ -127,7 +127,7 @@ void change(int p, Check check, Change change) {
   }
   x = p + 2 * MAX_S + 1;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -141,7 +141,7 @@ void change(int p, Check check, Change change) {
   }
   x = p + 2 * MAX_S - 1;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -155,7 +155,7 @@ void change(int p, Check check, Change change) {
   }
   x = p - 2 * MAX_S + 1;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -169,7 +169,7 @@ void change(int p, Check check, Change change) {
   }
   x = p - 2 * MAX_S - 1;
   if (in(x)) {
-    change(p, x);
+    change(x);
     if (M[x] == t || M[x] == 0) {
       v = M[x] - t;
       check(x + MAX_S + 2, v, M[x]);
@@ -185,20 +185,19 @@ void change(int p, Check check, Change change) {
 template <typename Check>
 void change(int p, Check check) {
   if (cell[p].o) {
-    change<1>(p, check, [](int p, int n) { cell[p].v += ++M[n] > 0 ? 1 : -1; });
+    change<1>(p, check, [](int p) { ++M[p]; });
   } else {
-    change<-1>(p, check,
-               [](int p, int n) { cell[p].v += --M[n] < 0 ? 1 : -1; });
+    change<-1>(p, check, [](int p) { --M[p]; });
   }
 }
 
 template <int t, typename Check, typename Change>
 void change_(int p, Check check, Change change) {
   cell[p].o = !cell[p].o;
-  cell[p].v = 0;
+  cell[p].v = -cell[p].v;
   int x, v;
   x = p + MAX_S + 2;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -210,7 +209,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p + MAX_S - 2;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -222,7 +221,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - MAX_S + 2;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -234,7 +233,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - MAX_S - 2;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S - 2, v, M[x]);
@@ -246,7 +245,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p + 2 * MAX_S + 1;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -258,7 +257,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S + 1, v, M[x]);
   }
   x = p + 2 * MAX_S - 1;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -270,7 +269,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - 2 * MAX_S + 1;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -282,7 +281,7 @@ void change_(int p, Check check, Change change) {
     check(x - 2 * MAX_S - 1, v, M[x]);
   }
   x = p - 2 * MAX_S - 1;
-  change(p, x);
+  change(x);
   if (M[x] == t || M[x] == 0) {
     v = M[x] - t;
     check(x + MAX_S + 2, v, M[x]);
@@ -297,11 +296,9 @@ void change_(int p, Check check, Change change) {
 template <typename Check>
 void change_(int p, Check check) {
   if (cell[p].o) {
-    change_<1>(p, check,
-               [](int p, int n) { cell[p].v += ++M[n] > 0 ? 1 : -1; });
+    change_<1>(p, check, [](int p) { ++M[p]; });
   } else {
-    change_<-1>(p, check,
-                [](int p, int n) { cell[p].v += --M[n] < 0 ? 1 : -1; });
+    change_<-1>(p, check, [](int p) { --M[p]; });
   }
 }
 
