@@ -341,8 +341,9 @@ class KnightsAttacks {
       for (int i = 0; i < S; ++i) {
         for (int j = 0; j < S; ++j) {
           int p = to(i, j);
-          if (cell[p].v >
-              time * get_random_double() - 0.5 + get_random_double()) {
+          if (cell[p].v > time - 0.8 &&
+              cell[p].v >
+                  time * get_random_double() - 0.8 + get_random_double()) {
             if (4 <= i && i < S - 4 && 4 <= j && j < S - 4) {
               change_(p, check_);
             } else if (2 <= i && i < S - 2 && 2 <= j && j < S - 2) {
