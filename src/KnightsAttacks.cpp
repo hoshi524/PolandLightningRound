@@ -335,15 +335,20 @@ class KnightsAttacks {
         }
       }
     };
+    constexpr int ln = 32768;
+    int log_[ln];
+    for (int i = 0; i < ln; ++i) {
+      log_[i] = -0.6 / TIME_LIMIT * (1 << 28) * log((i + 0.5) / ln);
+    }
     while (true) {
-      const double time = -2.0 * (end - get_time()) / TIME_LIMIT;
-      if (time > 0) break;
+      int time = end - get_time();
+      if (time <= 0) break;
       for (int i = 0; i < S; ++i) {
         for (int j = 0; j < S; ++j) {
           int p = to(i, j);
-          if (cell[p].v > time - 0.8 &&
-              cell[p].v >
-                  time * get_random_double() - 0.8 + get_random_double()) {
+          if (cell[p].v >= 0 ||
+              (cell[p].v > -6 &&
+               (-cell[p].v << 28) <= log_[get_random() % ln] * time)) {
             if (4 <= i && i < S - 4 && 4 <= j && j < S - 4) {
               change_(p, check_);
             } else if (2 <= i && i < S - 2 && 2 <= j && j < S - 2) {
