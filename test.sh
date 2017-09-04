@@ -1,8 +1,6 @@
-set -u
+set -e
 
 cd `dirname $0`
-
-mkdir out
 
 javac src/KnightsAttacksVis.java -d out
 
