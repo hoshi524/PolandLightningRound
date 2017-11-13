@@ -346,8 +346,10 @@ public class KnightsAttacksVis {
     }
 
     public static void main(String[] args) {
-        for (long seed = 1, end = seed + 10; seed < end; ++seed) {
-            new KnightsAttacksVis().exec(args[0], seed);
+        for (long seed = 1, end = seed + 1000; seed < end; ++seed) {
+            for (String exec : args) {
+                new KnightsAttacksVis().exec(exec, seed);
+            }
         }
     }
 
