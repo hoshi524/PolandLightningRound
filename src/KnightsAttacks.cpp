@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include <unistd.h>
 using namespace std;
 
 constexpr double TIME_LIMIT = 9800;
@@ -303,34 +302,6 @@ void change_(int p, Check check) {
   }
 }
 
-void change(int p) {
-  auto check_ = [](int n, int a, int b) {
-    if (cell[n].o) {
-      cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
-    } else {
-      cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
-    }
-  };
-  auto check = [](int n, int a, int b) {
-    if (in(n)) {
-      if (cell[n].o) {
-        cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
-      } else {
-        cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
-      }
-    }
-  };
-  int x = p >> 9;
-  int y = p & (MAX_S - 1);
-  if (4 <= x && x < S - 4 && 4 <= y && y < S - 4) {
-    change_(p, check_);
-  } else if (2 <= x && x < S - 2 && 2 <= y && y < S - 2) {
-    change_(p, check);
-  } else {
-    change(p, check);
-  }
-}
-
 class KnightsAttacks {
  public:
   vector<string> placeKnights(vector<string> board) {
@@ -348,50 +319,40 @@ class KnightsAttacks {
         cell[p].value(p);
       }
     }
-    constexpr int batch = 10;
-    constexpr int ln = 32768;
-    int log_[ln];
-    for (int i = 0; i < ln; ++i) {
-      log_[i] = -0.6 / batch * (1 << 28) * log((i + 0.5) / ln);
-    }
-    while (end > get_time()) {
-    start:
-      constexpr int k = 16;
-
-      int a = get_random() % (S - k + 1);
-      if (a > S - k) a = S - k;
-      if (a < 0) a = 0;
-      int ae = a + k;
-      if (ae > S) ae = S;
-
-      int b = get_random() % (S - k + 1);
-      if (b > S - k) b = S - k;
-      if (b < 0) b = 0;
-      int be = b + k;
-      if (be > S) be = S;
-
-      static int path[0x1000];
-      int pi = 0;
-      int bi = 0;
-      int v = 0;
-      for (int t = 0; t < batch; ++t) {
-        for (int i = a; i < ae; ++i) {
-          for (int j = b; j < be; ++j) {
-            int p = to(i, j);
-            if (cell[p].v >= 0 ||
-                (cell[p].v > -6 &&
-                 (-cell[p].v << 28) <= log_[get_random() % ln] * (batch - t))) {
-              v += cell[p].v;
-              change(p);
-              path[pi++] = p;
-              if (v > 0) goto start;
-              if (v == 0) bi = pi;
+    auto check_ = [](int n, int a, int b) {
+      if (cell[n].o) {
+        cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
+      } else {
+        cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
+      }
+    };
+    auto check = [](int n, int a, int b) {
+      if (in(n)) {
+        if (cell[n].o) {
+          cell[n].v += (a < 0 ? -1 : 1) + (b < 0 ? 1 : -1);
+        } else {
+          cell[n].v += (a > 0 ? -1 : 1) + (b > 0 ? 1 : -1);
+        }
+      }
+    };
+    while (true) {
+      const double time = -2.0 * (end - get_time()) / TIME_LIMIT;
+      if (time > 0) break;
+      for (int i = 0; i < S; ++i) {
+        for (int j = 0; j < S; ++j) {
+          int p = to(i, j);
+          if (cell[p].v > time - 0.8 &&
+              cell[p].v >
+                  time * get_random_double() - 0.8 + get_random_double()) {
+            if (4 <= i && i < S - 4 && 4 <= j && j < S - 4) {
+              change_(p, check_);
+            } else if (2 <= i && i < S - 2 && 2 <= j && j < S - 2) {
+              change_(p, check);
+            } else {
+              change(p, check);
             }
           }
         }
-      }
-      for (int i = pi - 1; i >= bi; --i) {
-        change(path[i]);
       }
     }
     vector<string> ret(S, string(S, '.'));
